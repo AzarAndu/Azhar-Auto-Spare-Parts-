@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spare Parts Inventory</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Firebase CDN scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js"></script>
 </head>
 <body>
   <h2>Spare Parts Inventory</h2>
@@ -14,11 +17,6 @@
   <input id="qty" placeholder="Quantity" type="number" />
   <input id="price" placeholder="Price" type="number" />
   <button onclick="addPart()">Add</button>
-  <br /><br />
-  <input id="search" placeholder="Search part..." oninput="searchParts()" />
-  <button onclick="clearAll()">Clear All</button>
-  <br /><br />
-  <button onclick="exportToExcel()">Export to Excel</button>
   <br /><br />
   <table id="partsTable">
     <tr>
