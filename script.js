@@ -1,72 +1,70 @@
-// Import Firebase modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore, collection, addDoc, getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-// Your Firebase config
+// Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyAbYF7orwgdL__bN",
+  apiKey: "AIzaSyABYF7orwgrdL_oYyNydHAzjrTftucm1iY",
   authDomain: "auto-parts-inventory-6e97e.firebaseapp.com",
   projectId: "auto-parts-inventory-6e97e",
   storageBucket: "auto-parts-inventory-6e97e.appspot.com",
   messagingSenderId: "21714181275",
-  appId: "1:21714181275:web:80f880ecc00d2262277a3e"
+  appId: "1:21714181275:web:80f880eec00d22622f7a3e"
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const partsCollection = collection(db, "parts");
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const partsRef = db.collection("parts");
 
-// Add part
-document.getElementById("addPart").addEventListener("click", async () => {
-  const partName = document.getElementById("partName").value;
-  const partNumber = document.getElementById("partNumber").value;
-  const category = document.getElementById("category").value;
-  const quantity = parseInt(document.getElementById("quantity").value);
-  const price = parseFloat(document.getElementById("price").value);
+// Add Part
+async function addPart() {
+  const name = document.getElementById('partName').value.trim();
+  const no = document.getElementById('partNo').value.trim();
+  const category = document.getElementById('category').value.trim();
+  const qty = parseInt(document.getElementById('qty').value);
+  const price = parseInt(document.getElementById('price').value);
+  const total = qty * price;
 
-  if (!partName || !partNumber || !category || isNaN(quantity) || isNaN(price)) {
-    alert("Please fill all fields correctly!");
+  if (!name || !no || !category || !qty || !price) {
+    alert("Please fill all fields");
     return;
   }
 
-  try {
-    await addDoc(partsCollection, {
-      partName,
-      partNumber,
-      category,
-      quantity,
-      price
-    });
-    alert("Part added!");
-    loadParts();
-  } catch (e) {
-    console.error("Error adding part: ", e);
-    alert("Failed to add part.");
-  }
-});
+  await partsRef.add({ name, no, category, qty, price, total });
+  clearInputs();
+  loadParts();
+}
 
-// Load parts into table
+// Load All Parts
 async function loadParts() {
-  const partsTable = document.getElementById("partsTable");
-  partsTable.innerHTML = ""; // Clear old rows
+  const table = document.getElementById('partsTable');
+  while (table.rows.length > 1) table.deleteRow(1);
 
-  const snapshot = await getDocs(partsCollection);
+  const snapshot = await partsRef.get();
   snapshot.forEach(doc => {
-    const data = doc.data();
-    const row = document.createElement("tr");
+    const part = doc.data();
+    const row = table.insertRow();
     row.innerHTML = `
-      <td>${data.partName}</td>
-      <td>${data.partNumber}</td>
-      <td>${data.category}</td>
-      <td>${data.quantity}</td>
-      <td>${data.price}</td>
+      <td>${part.name}</td>
+      <td>${part.no}</td>
+      <td>${part.category}</td>
+      <td>${part.qty}</td>
+      <td>${part.price}</td>
+      <td>${part.total}</td>
+      <td><button onclick="deletePart('${doc.id}')">Delete</button></td>
     `;
-    partsTable.appendChild(row);
   });
 }
 
-// Load on page start
-loadParts();
+// Delete Part
+async function deletePart(id) {
+  await partsRef.doc(id).delete();
+  loadParts();
+}
+
+// Clear Inputs
+function clearInputs() {
+  ['partName', 'partNo', 'category', 'qty', 'price'].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+}
+
+// Load on start
+window.onload = loadParts;
