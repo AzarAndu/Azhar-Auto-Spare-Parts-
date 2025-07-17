@@ -1,62 +1,70 @@
-// Firebase config
+// Import Firebase modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Your Firebase config
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAbYF7orwgdL__bN",
+  authDomain: "auto-parts-inventory-6e97e.firebaseapp.com",
+  projectId: "auto-parts-inventory-6e97e",
+  storageBucket: "auto-parts-inventory-6e97e.appspot.com",
+  messagingSenderId: "21714181275",
+  appId: "1:21714181275:web:80f880ecc00d2262277a3e"
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const partsCollection = collection(db, "parts");
 
 // Add part
-document.getElementById("addBtn").addEventListener("click", async () => {
-  const name = document.getElementById("partName").value;
-  const number = document.getElementById("partNumber").value;
+document.getElementById("addPart").addEventListener("click", async () => {
+  const partName = document.getElementById("partName").value;
+  const partNumber = document.getElementById("partNumber").value;
   const category = document.getElementById("category").value;
   const quantity = parseInt(document.getElementById("quantity").value);
   const price = parseFloat(document.getElementById("price").value);
 
-  if (!name || !number || !category || !quantity || !price) {
-    alert("Please fill all fields.");
+  if (!partName || !partNumber || !category || isNaN(quantity) || isNaN(price)) {
+    alert("Please fill all fields correctly!");
     return;
   }
 
   try {
-    await db.collection("parts").add({
-      name,
-      number,
+    await addDoc(partsCollection, {
+      partName,
+      partNumber,
       category,
       quantity,
-      price,
-      created: firebase.firestore.FieldValue.serverTimestamp()
+      price
     });
     alert("Part added!");
     loadParts();
-  } catch (error) {
-    console.error("Error adding part:", error);
+  } catch (e) {
+    console.error("Error adding part: ", e);
+    alert("Failed to add part.");
   }
 });
 
-// Load parts
+// Load parts into table
 async function loadParts() {
-  const tableBody = document.getElementById("partsTable").getElementsByTagName("tbody")[0];
-  tableBody.innerHTML = "";
+  const partsTable = document.getElementById("partsTable");
+  partsTable.innerHTML = ""; // Clear old rows
 
-  const snapshot = await db.collection("parts").orderBy("created", "desc").get();
+  const snapshot = await getDocs(partsCollection);
   snapshot.forEach(doc => {
-    const part = doc.data();
-    const row = tableBody.insertRow();
+    const data = doc.data();
+    const row = document.createElement("tr");
     row.innerHTML = `
-      <td>${part.name}</td>
-      <td>${part.number}</td>
-      <td>${part.category}</td>
-      <td>${part.quantity}</td>
-      <td>${part.price}</td>
+      <td>${data.partName}</td>
+      <td>${data.partNumber}</td>
+      <td>${data.category}</td>
+      <td>${data.quantity}</td>
+      <td>${data.price}</td>
     `;
+    partsTable.appendChild(row);
   });
 }
 
