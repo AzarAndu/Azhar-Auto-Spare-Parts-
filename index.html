@@ -1,52 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Azhar Auto Spare Parts</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    input, select, button {
-      margin: 5px;
-      padding: 8px;
-    }
-    table {
-      border-collapse: collapse;
-      margin-top: 20px;
-      width: 100%;
-    }
-    th, td {
-      border: 1px solid #aaa;
-      padding: 8px;
-      text-align: center;
-    }
-  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script defer src="script.js"></script>
 </head>
 <body>
-  <h2>Auto Spare Parts Inventory</h2>
-  <input id="partName" type="text" placeholder="Part Name" />
-  <input id="partNumber" type="text" placeholder="Part Number" />
-  <input id="category" type="text" placeholder="Category" />
-  <input id="quantity" type="number" placeholder="Quantity" />
-  <input id="price" type="number" placeholder="Price" />
-  <button id="addPart">Add Part</button>
+  <h2>Spare Parts Inventory</h2>
+  <input id="partName" placeholder="Part Name">
+  <input id="partNo" placeholder="Part Number">
+  <input id="category" placeholder="Category">
+  <input id="qty" type="number" placeholder="Quantity">
+  <input id="price" type="number" placeholder="Price">
+  <button onclick="addPart()">Add Part</button>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Part Name</th>
-        <th>Part Number</th>
-        <th>Category</th>
-        <th>Quantity</th>
-        <th>Price</th>
-      </tr>
-    </thead>
-    <tbody id="partsTable"></tbody>
+  <table border="1" id="partsTable">
+    <tr>
+      <th>Name</th><th>Number</th><th>Category</th>
+      <th>Qty</th><th>Price</th><th>Total</th><th>Action</th>
+    </tr>
   </table>
-
-  <script type="module" src="app.js"></script>
 </body>
 </html>
