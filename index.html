@@ -2,33 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spare Parts Inventory</title>
-  <link rel="stylesheet" href="style.css" />
-  <!-- Firebase CDN scripts -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Azhar Auto Spare Parts</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input, select, button {
+      margin: 5px;
+      padding: 8px;
+    }
+    table {
+      border-collapse: collapse;
+      margin-top: 20px;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <h2>Spare Parts Inventory</h2>
-  <input id="partName" placeholder="Part Name" />
-  <input id="partNo" placeholder="Part No." />
-  <input id="category" placeholder="Category" />
-  <input id="qty" placeholder="Quantity" type="number" />
-  <input id="price" placeholder="Price" type="number" />
-  <button onclick="addPart()">Add</button>
-  <br /><br />
-  <table id="partsTable">
-    <tr>
-      <th>Part Name</th>
-      <th>Part No.</th>
-      <th>Category</th>
-      <th>Qty</th>
-      <th>Price</th>
-      <th>Total</th>
-      <th>Action</th>
-    </tr>
+  <h2>Auto Spare Parts Inventory</h2>
+  <input id="partName" type="text" placeholder="Part Name" />
+  <input id="partNumber" type="text" placeholder="Part Number" />
+  <input id="category" type="text" placeholder="Category" />
+  <input id="quantity" type="number" placeholder="Quantity" />
+  <input id="price" type="number" placeholder="Price" />
+  <button id="addPart">Add Part</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Part Name</th>
+        <th>Part Number</th>
+        <th>Category</th>
+        <th>Quantity</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody id="partsTable"></tbody>
   </table>
-  <script src="script.js"></script>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
