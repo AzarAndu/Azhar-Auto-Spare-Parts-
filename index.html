@@ -94,6 +94,7 @@
     <button onclick="calculate()">Calculate</button>
     
     <div class="results" id="results" style="display:none;">
+      <div class="result-item">💵 Total Invested: <span id="totalInv" class="highlight"></span></div>
       <div class="result-item">💰 Profit Booked: <span id="profit" class="highlight"></span></div>
       <div class="result-item">💵 Cash Recovered: <span id="cash" class="highlight"></span></div>
       <div class="result-item">📦 Remaining Quantity: <span id="remainingQty" class="highlight"></span></div>
@@ -121,6 +122,7 @@
       const remainingInvestment = totalInvested - cashRecovered;
       const newAvg = remainingQty > 0 ? (remainingInvestment / remainingQty) : 0;
 
+      document.getElementById("totalInv").textContent = "₹" + totalInvested.toFixed(2);
       document.getElementById("profit").textContent = "₹" + profit.toFixed(2);
       document.getElementById("cash").textContent = "₹" + cashRecovered.toFixed(2);
       document.getElementById("remainingQty").textContent = remainingQty;
