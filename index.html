@@ -3,71 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Partial Sell Calculator</title>
+  <title>Portfolio Calculator</title>
   <style>
     body {
       font-family: "Segoe UI", sans-serif;
-      background: #f0f4f9;
+      background: #f4f7fb;
       margin: 0;
       padding: 20px;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
     }
     .container {
       background: #fff;
-      padding: 30px;
+      padding: 25px;
       border-radius: 16px;
       box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-      max-width: 500px;
+      max-width: 1000px;
       width: 100%;
+      overflow-x: auto;
     }
     h1 {
       text-align: center;
       color: #333;
       margin-bottom: 20px;
     }
-    label {
-      font-weight: 600;
-      color: #444;
-      display: block;
-      margin: 10px 0 5px;
-    }
-    input {
+    table {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 15px;
-      margin-bottom: 15px;
+      border-collapse: collapse;
+      margin-bottom: 20px;
     }
-    button {
-      width: 100%;
-      padding: 14px;
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
       background: #0077ff;
       color: white;
-      font-weight: bold;
-      font-size: 16px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: 0.3s;
+      font-weight: 600;
     }
-    button:hover {
-      background: #005fcc;
+    tr:nth-child(even) {
+      background: #f9f9f9;
     }
-    .results {
+    input {
+      width: 100px;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .summary {
       margin-top: 20px;
-      padding: 20px;
-      border-radius: 14px;
-      background: #f9fbff;
-      box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
-    }
-    .result-item {
-      margin: 8px 0;
+      padding: 15px;
+      background: #f1f8ff;
+      border-radius: 12px;
       font-size: 16px;
-      color: #222;
+      line-height: 1.8;
     }
     .highlight {
       font-weight: bold;
@@ -77,59 +68,91 @@
 </head>
 <body>
   <div class="container">
-    <h1>Partial Sell Calculator</h1>
-    
-    <label for="buyPrice">Buy Price (₹)</label>
-    <input type="number" id="buyPrice" placeholder="e.g. 84.95" step="0.01">
-    
-    <label for="totalQty">Total Quantity</label>
-    <input type="number" id="totalQty" placeholder="e.g. 250">
-    
-    <label for="sellPrice">Sell Price (₹)</label>
-    <input type="number" id="sellPrice" placeholder="e.g. 89.95" step="0.01">
-    
-    <label for="sellQty">Partial Sell Quantity</label>
-    <input type="number" id="sellQty" placeholder="e.g. 100">
-    
-    <button onclick="calculate()">Calculate</button>
-    
-    <div class="results" id="results" style="display:none;">
-      <div class="result-item">💵 Total Invested: <span id="totalInv" class="highlight"></span></div>
-      <div class="result-item">💰 Profit Booked: <span id="profit" class="highlight"></span></div>
-      <div class="result-item">💵 Cash Recovered: <span id="cash" class="highlight"></span></div>
-      <div class="result-item">📦 Remaining Quantity: <span id="remainingQty" class="highlight"></span></div>
-      <div class="result-item">📊 Remaining Investment: <span id="remainingInv" class="highlight"></span></div>
-      <div class="result-item">⚡ New Avg Price: <span id="newAvg" class="highlight"></span></div>
+    <h1>Portfolio Calculator (10 Rows)</h1>
+
+    <label for="marketPrice"><b>Market Price (₹): </b></label>
+    <input type="number" id="marketPrice" value="90" step="0.01" oninput="calculate()">
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Invest Amount (₹)</th>
+          <th>Qty</th>
+          <th>Buy Price (₹)</th>
+          <th>Current Value (₹)</th>
+          <th>P/L (₹)</th>
+          <th>P/L %</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- 10 rows -->
+        <script>
+          for (let i = 1; i <= 10; i++) {
+            document.write(`
+              <tr>
+                <td>${i}</td>
+                <td><input type="number" id="invest${i}" step="0.01" oninput="calculate()"></td>
+                <td><input type="number" id="qty${i}" step="1" oninput="calculate()"></td>
+                <td id="buy${i}">-</td>
+                <td id="value${i}">-</td>
+                <td id="pl${i}">-</td>
+                <td id="plp${i}">-</td>
+              </tr>
+            `);
+          }
+        </script>
+      </tbody>
+    </table>
+
+    <div class="summary">
+      <div>Total Invested: <span id="totalInvest" class="highlight">₹0</span></div>
+      <div>Total Quantity: <span id="totalQty" class="highlight">0</span></div>
+      <div>Average Buy Price: <span id="avgBuy" class="highlight">₹0</span></div>
+      <div>Current Value: <span id="totalValue" class="highlight">₹0</span></div>
+      <div>Total P/L: <span id="totalPL" class="highlight">₹0</span></div>
+      <div>Total P/L %: <span id="totalPLP" class="highlight">0%</span></div>
     </div>
   </div>
 
   <script>
     function calculate() {
-      const buyPrice = parseFloat(document.getElementById("buyPrice").value);
-      const totalQty = parseInt(document.getElementById("totalQty").value);
-      const sellPrice = parseFloat(document.getElementById("sellPrice").value);
-      const sellQty = parseInt(document.getElementById("sellQty").value);
+      const marketPrice = parseFloat(document.getElementById("marketPrice").value);
+      let totalInvest = 0, totalQty = 0, totalValue = 0;
 
-      if (isNaN(buyPrice) || isNaN(totalQty) || isNaN(sellPrice) || isNaN(sellQty)) {
-        alert("⚠️ Please fill all inputs correctly!");
-        return;
+      for (let i = 1; i <= 10; i++) {
+        const invest = parseFloat(document.getElementById("invest" + i).value) || 0;
+        const qty = parseFloat(document.getElementById("qty" + i).value) || 0;
+
+        let buyPrice = 0, value = 0, pl = 0, plp = 0;
+
+        if (invest > 0 && qty > 0) {
+          buyPrice = invest / qty;
+          value = qty * marketPrice;
+          pl = value - invest;
+          plp = (pl / invest) * 100;
+        }
+
+        document.getElementById("buy" + i).textContent = buyPrice ? "₹" + buyPrice.toFixed(2) : "-";
+        document.getElementById("value" + i).textContent = value ? "₹" + value.toFixed(2) : "-";
+        document.getElementById("pl" + i).textContent = pl ? "₹" + pl.toFixed(2) : "-";
+        document.getElementById("plp" + i).textContent = plp ? plp.toFixed(2) + "%" : "-";
+
+        totalInvest += invest;
+        totalQty += qty;
+        totalValue += value;
       }
 
-      const totalInvested = buyPrice * totalQty;
-      const profit = (sellPrice - buyPrice) * sellQty;
-      const cashRecovered = sellPrice * sellQty;
-      const remainingQty = totalQty - sellQty;
-      const remainingInvestment = totalInvested - cashRecovered;
-      const newAvg = remainingQty > 0 ? (remainingInvestment / remainingQty) : 0;
+      const avgBuy = totalQty > 0 ? totalInvest / totalQty : 0;
+      const totalPL = totalValue - totalInvest;
+      const totalPLP = totalInvest > 0 ? (totalPL / totalInvest) * 100 : 0;
 
-      document.getElementById("totalInv").textContent = "₹" + totalInvested.toFixed(2);
-      document.getElementById("profit").textContent = "₹" + profit.toFixed(2);
-      document.getElementById("cash").textContent = "₹" + cashRecovered.toFixed(2);
-      document.getElementById("remainingQty").textContent = remainingQty;
-      document.getElementById("remainingInv").textContent = "₹" + remainingInvestment.toFixed(2);
-      document.getElementById("newAvg").textContent = "₹" + newAvg.toFixed(2);
-
-      document.getElementById("results").style.display = "block";
+      document.getElementById("totalInvest").textContent = "₹" + totalInvest.toFixed(2);
+      document.getElementById("totalQty").textContent = totalQty;
+      document.getElementById("avgBuy").textContent = "₹" + avgBuy.toFixed(2);
+      document.getElementById("totalValue").textContent = "₹" + totalValue.toFixed(2);
+      document.getElementById("totalPL").textContent = "₹" + totalPL.toFixed(2);
+      document.getElementById("totalPLP").textContent = totalPLP.toFixed(2) + "%";
     }
   </script>
 </body>
