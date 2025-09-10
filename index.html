@@ -64,6 +64,29 @@
       font-weight: bold;
       color: #008000;
     }
+    .profit {
+      color: green;
+      font-weight: bold;
+    }
+    .loss {
+      color: red;
+      font-weight: bold;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 20px;
+      margin-top: 15px;
+      background: #0077ff;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background: #005fcc;
+    }
   </style>
 </head>
 <body>
@@ -73,7 +96,7 @@
     <label for="marketPrice"><b>Market Price (₹): </b></label>
     <input type="number" id="marketPrice" value="90" step="0.01" oninput="calculate()">
 
-    <table>
+    <table id="portfolioTable">
       <thead>
         <tr>
           <th>#</th>
@@ -113,6 +136,8 @@
       <div>Total P/L: <span id="totalPL" class="highlight">₹0</span></div>
       <div>Total P/L %: <span id="totalPLP" class="highlight">0%</span></div>
     </div>
+
+    <button class="btn" onclick="exportTable()">⬇ Export to CSV</button>
   </div>
 
   <script>
@@ -135,8 +160,26 @@
 
         document.getElementById("buy" + i).textContent = buyPrice ? "₹" + buyPrice.toFixed(2) : "-";
         document.getElementById("value" + i).textContent = value ? "₹" + value.toFixed(2) : "-";
-        document.getElementById("pl" + i).textContent = pl ? "₹" + pl.toFixed(2) : "-";
-        document.getElementById("plp" + i).textContent = plp ? plp.toFixed(2) + "%" : "-";
+
+        const plCell = document.getElementById("pl" + i);
+        const plpCell = document.getElementById("plp" + i);
+
+        if (pl) {
+          plCell.textContent = "₹" + pl.toFixed(2);
+          plpCell.textContent = plp.toFixed(2) + "%";
+          if (pl >= 0) {
+            plCell.className = "profit";
+            plpCell.className = "profit";
+          } else {
+            plCell.className = "loss";
+            plpCell.className = "loss";
+          }
+        } else {
+          plCell.textContent = "-";
+          plCell.className = "";
+          plpCell.textContent = "-";
+          plpCell.className = "";
+        }
 
         totalInvest += invest;
         totalQty += qty;
@@ -151,8 +194,43 @@
       document.getElementById("totalQty").textContent = totalQty;
       document.getElementById("avgBuy").textContent = "₹" + avgBuy.toFixed(2);
       document.getElementById("totalValue").textContent = "₹" + totalValue.toFixed(2);
-      document.getElementById("totalPL").textContent = "₹" + totalPL.toFixed(2);
-      document.getElementById("totalPLP").textContent = totalPLP.toFixed(2) + "%";
+
+      const totalPLSpan = document.getElementById("totalPL");
+      const totalPLPSpan = document.getElementById("totalPLP");
+
+      totalPLSpan.textContent = "₹" + totalPL.toFixed(2);
+      totalPLPSpan.textContent = totalPLP.toFixed(2) + "%";
+
+      if (totalPL >= 0) {
+        totalPLSpan.className = "profit";
+        totalPLPSpan.className = "profit";
+      } else {
+        totalPLSpan.className = "loss";
+        totalPLPSpan.className = "loss";
+      }
+    }
+
+    function exportTable() {
+      let csv = [];
+      const rows = document.querySelectorAll("table tr");
+      for (let row of rows) {
+        let cols = row.querySelectorAll("td, th");
+        let rowData = [];
+        for (let col of cols) {
+          rowData.push(col.innerText.replace(/₹/g, ""));
+        }
+        csv.push(rowData.join(","));
+      }
+
+      const blob = new Blob([csv.join("\n")], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.setAttribute("hidden", "");
+      a.setAttribute("href", url);
+      a.setAttribute("download", "portfolio.csv");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
   </script>
 </body>
