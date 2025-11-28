@@ -1,237 +1,165 @@
+<!-- COMPLETE WORKING SPELLING GAME WITH EMOJIS -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfolio Calculator</title>
-  <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hanna Yasmin Spelling Game</title>
+<style>
     body {
-      font-family: "Segoe UI", sans-serif;
-      background: #f4f7fb;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
+        text-align: center;
+        background: linear-gradient(#ffecd2, #fcb69f);
+        font-family: 'Comic Sans MS', cursive;
     }
-    .container {
-      background: #fff;
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-      max-width: 1000px;
-      width: 100%;
-      overflow-x: auto;
-    }
+
     h1 {
-      text-align: center;
-      color: #333;
-      margin-bottom: 20px;
+        color: #d9006a;
+        font-size: 40px;
+        margin-top: 20px;
+        text-shadow: 2px 2px 5px #fff;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
+
+    .game-box {
+        width: 320px;
+        margin: auto;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
     }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
+
+    .hanna-container {
+        position: relative;
+        width: 260px;
+        margin: auto;
     }
-    th {
-      background: #0077ff;
-      color: white;
-      font-weight: 600;
+
+    .hanna-image {
+        width: 100%;
+        border-radius: 15px;
     }
-    tr:nth-child(even) {
-      background: #f9f9f9;
+
+    .floating-number {
+        position: absolute;
+        top: 65%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 95px;
+        font-weight: bold;
+        color: #ffcc00;
+        text-shadow: 3px 3px 8px #ff0066;
+        animation: pop 1s infinite ease-in-out alternate;
     }
+
+    @keyframes pop {
+        0% { transform: translate(-50%, -50%) scale(1); }
+        100% { transform: translate(-50%, -50%) scale(1.15); }
+    }
+
     input {
-      width: 100px;
-      padding: 6px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      text-align: center;
+        width: 80%;
+        padding: 10px;
+        font-size: 20px;
+        border: 2px solid #7a7a7a;
+        border-radius: 10px;
+        margin-top: 20px;
     }
-    .summary {
-      margin-top: 20px;
-      padding: 15px;
-      background: #f1f8ff;
-      border-radius: 12px;
-      font-size: 16px;
-      line-height: 1.8;
+
+    button {
+        margin-top: 15px;
+        padding: 10px 30px;
+        background: #ff7b5a;
+        border: none;
+        color: #fff;
+        font-size: 22px;
+        border-radius: 10px;
+        cursor: pointer;
     }
-    .highlight {
-      font-weight: bold;
-      color: #008000;
+
+    #celebration {
+        font-size: 22px;
+        margin-top: 15px;
+        display: none;
+        color: #ff1493;
+        animation: sparkle 1.5s infinite;
     }
-    .profit {
-      color: green;
-      font-weight: bold;
+
+    @keyframes sparkle {
+        0%,100% { opacity:1; }
+        50% { opacity:0.4; }
     }
-    .loss {
-      color: red;
-      font-weight: bold;
-    }
-    .btn {
-      display: inline-block;
-      padding: 12px 20px;
-      margin-top: 15px;
-      background: #0077ff;
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .btn:hover {
-      background: #005fcc;
-    }
-  </style>
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>Portfolio Calculator (10 Rows)</h1>
 
-    <label for="marketPrice"><b>Market Price (₹): </b></label>
-    <input type="number" id="marketPrice" value="90" step="0.01" oninput="calculate()">
+<h1>Spell the Number!</h1>
 
-    <table id="portfolioTable">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Invest Amount (₹)</th>
-          <th>Qty</th>
-          <th>Buy Price (₹)</th>
-          <th>Current Value (₹)</th>
-          <th>P/L (₹)</th>
-          <th>P/L %</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody">
-        <!-- 10 rows -->
-        <script>
-          for (let i = 1; i <= 10; i++) {
-            document.write(`
-              <tr>
-                <td>${i}</td>
-                <td><input type="number" id="invest${i}" step="0.01" oninput="calculate()"></td>
-                <td><input type="number" id="qty${i}" step="1" oninput="calculate()"></td>
-                <td id="buy${i}">-</td>
-                <td id="value${i}">-</td>
-                <td id="pl${i}">-</td>
-                <td id="plp${i}">-</td>
-              </tr>
-            `);
-          }
-        </script>
-      </tbody>
-    </table>
+<div class="game-box">
 
-    <div class="summary">
-      <div>Total Invested: <span id="totalInvest" class="highlight">₹0</span></div>
-      <div>Total Quantity: <span id="totalQty" class="highlight">0</span></div>
-      <div>Average Buy Price: <span id="avgBuy" class="highlight">₹0</span></div>
-      <div>Current Value: <span id="totalValue" class="highlight">₹0</span></div>
-      <div>Total P/L: <span id="totalPL" class="highlight">₹0</span></div>
-      <div>Total P/L %: <span id="totalPLP" class="highlight">0%</span></div>
+    <div class="hanna-container">
+        <img src="hanna.jpeg" class="hanna-image">
+        <div id="dynamic-number" class="floating-number"></div>
     </div>
 
-    <button class="btn" onclick="exportTable()">⬇ Export to CSV</button>
-  </div>
+    <input id="answer" placeholder="Type the spelling...">
+    <button onclick="checkAnswer()">Check</button>
 
-  <script>
-    function calculate() {
-      const marketPrice = parseFloat(document.getElementById("marketPrice").value);
-      let totalInvest = 0, totalQty = 0, totalValue = 0;
+    <p id="result" style="font-size:22px; font-weight:bold; margin-top:10px;"></p>
+    <div id="celebration"></div>
+</div>
 
-      for (let i = 1; i <= 10; i++) {
-        const invest = parseFloat(document.getElementById("invest" + i).value) || 0;
-        const qty = parseFloat(document.getElementById("qty" + i).value) || 0;
+<script>
+// NUMBERS LIST
+let numbers = [
+    { num: 1, word: "one" },
+    { num: 2, word: "two" },
+    { num: 3, word: "three" },
+    { num: 4, word: "four" },
+    { num: 5, word: "five" },
+    { num: 6, word: "six" },
+    { num: 7, word: "seven" },
+    { num: 8, word: "eight" },
+    { num: 9, word: "nine" },
+    { num: 10, word: "ten" }
+];
 
-        let buyPrice = 0, value = 0, pl = 0, plp = 0;
+let currentIndex = 0;
 
-        if (invest > 0 && qty > 0) {
-          buyPrice = invest / qty;
-          value = qty * marketPrice;
-          pl = value - invest;
-          plp = (pl / invest) * 100;
-        }
+// SHOW NUMBER
+function loadNumber() {
+    document.getElementById("dynamic-number").textContent = numbers[currentIndex].num;
+}
 
-        document.getElementById("buy" + i).textContent = buyPrice ? "₹" + buyPrice.toFixed(2) : "-";
-        document.getElementById("value" + i).textContent = value ? "₹" + value.toFixed(2) : "-";
+loadNumber();
 
-        const plCell = document.getElementById("pl" + i);
-        const plpCell = document.getElementById("plp" + i);
+// CHECK ANSWER
+function checkAnswer() {
+    let input = document.getElementById("answer").value.trim().toLowerCase();
+    let result = document.getElementById("result");
 
-        if (pl) {
-          plCell.textContent = "₹" + pl.toFixed(2);
-          plpCell.textContent = plp.toFixed(2) + "%";
-          if (pl >= 0) {
-            plCell.className = "profit";
-            plpCell.className = "profit";
-          } else {
-            plCell.className = "loss";
-            plpCell.className = "loss";
-          }
+    if (input === numbers[currentIndex].word) {
+
+        result.style.color = "green";
+        result.textContent = "✔ Correct! ☺️";
+
+        currentIndex++;
+        document.getElementById("answer").value = "";
+
+        if (currentIndex < numbers.length) {
+            loadNumber();
         } else {
-          plCell.textContent = "-";
-          plCell.className = "";
-          plpCell.textContent = "-";
-          plpCell.className = "";
+            result.textContent = "🎉 Finished! Great Job!";
+            let celeb = document.getElementById('celebration');
+            celeb.innerHTML = "🌟 Hanna Yasmin got 10 stars! 🌟<br>😀✨ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ✨😀";
+            celeb.style.display = "block";
         }
 
-        totalInvest += invest;
-        totalQty += qty;
-        totalValue += value;
-      }
-
-      const avgBuy = totalQty > 0 ? totalInvest / totalQty : 0;
-      const totalPL = totalValue - totalInvest;
-      const totalPLP = totalInvest > 0 ? (totalPL / totalInvest) * 100 : 0;
-
-      document.getElementById("totalInvest").textContent = "₹" + totalInvest.toFixed(2);
-      document.getElementById("totalQty").textContent = totalQty;
-      document.getElementById("avgBuy").textContent = "₹" + avgBuy.toFixed(2);
-      document.getElementById("totalValue").textContent = "₹" + totalValue.toFixed(2);
-
-      const totalPLSpan = document.getElementById("totalPL");
-      const totalPLPSpan = document.getElementById("totalPLP");
-
-      totalPLSpan.textContent = "₹" + totalPL.toFixed(2);
-      totalPLPSpan.textContent = totalPLP.toFixed(2) + "%";
-
-      if (totalPL >= 0) {
-        totalPLSpan.className = "profit";
-        totalPLPSpan.className = "profit";
-      } else {
-        totalPLSpan.className = "loss";
-        totalPLPSpan.className = "loss";
-      }
+    } else {
+        result.style.color = "red";
+        result.textContent = "✖ Wrong! ☹️";
     }
+}
+</script>
 
-    function exportTable() {
-      let csv = [];
-      const rows = document.querySelectorAll("table tr");
-      for (let row of rows) {
-        let cols = row.querySelectorAll("td, th");
-        let rowData = [];
-        for (let col of cols) {
-          rowData.push(col.innerText.replace(/₹/g, ""));
-        }
-        csv.push(rowData.join(","));
-      }
-
-      const blob = new Blob([csv.join("\n")], { type: "text/csv" });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.setAttribute("hidden", "");
-      a.setAttribute("href", url);
-      a.setAttribute("download", "portfolio.csv");
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-  </script>
 </body>
 </html>
