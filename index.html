@@ -1,182 +1,563 @@
-<!-- COMPLETE WORKING SPELLING GAME WITH HANNA - MOBILE RESPONSIVE -->
+<!-- Hanna Yasmin Spelling Game - Full Featured -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Hanna Yasmin Spelling Game</title>
 <style>
-    body {
-        text-align: center;
-        background: linear-gradient(#ffecd2, #fcb69f);
-        font-family: 'Comic Sans MS', cursive;
-        margin: 0;
-        padding: 0;
-    }
+  :root{
+    --accent:#ff7b5a;
+    --good:#2fbf71;
+    --bad:#e85d5d;
+    --bg1: #ffecd2;
+    --bg2: #fcb69f;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    font-family:"Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+    color:#222;
+    -webkit-font-smoothing:antialiased;
+  }
 
-    h1 {
-        color: #d9006a;
-        font-size: 40px;
-        margin-top: 20px;
-        text-shadow: 2px 2px 5px #fff;
-    }
+  .app {
+    width: min(96%, 420px);
+    background: white;
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.18);
+    text-align:center;
+  }
 
-    /* RESPONSIVE GAME BOX */
-    .game-box {
-        width: 90%;
-        max-width: 420px;
-        margin: auto;
-        background: #ffffff;
-        padding: 22px;
-        border-radius: 22px;
-        box-shadow: 0 0 18px rgba(0,0,0,0.25);
-    }
+  h1{
+    margin:6px 0 14px;
+    color:#d9006a;
+    font-size:1.6rem;
+    text-shadow: 1px 1px 6px #fff;
+  }
 
-    .hanna-container {
-        position: relative;
-        width: 100%;
-        max-width: 300px;
-        margin: auto;
-    }
+  /* Hanna image + board */
+  .hanna-wrap{
+    position:relative;
+    width:85%;
+    max-width:320px;
+    margin:8px auto 6px;
+  }
+  .hanna-image{
+    width:100%;
+    border-radius:12px;
+    display:block;
+  }
 
-    .hanna-image {
-        width: 100%;
-        border-radius: 15px;
-    }
+  /* floating number (auto-size) */
+  .floating-number{
+    position:absolute;
+    left:50%;
+    transform:translate(-50%,-50%);
+    top:65%; /* adjust down/up if needed */
+    font-weight:800;
+    font-size:12vw; /* scales on small screens */
+    line-height:1;
+    max-font-size:120px;
+    color:#ffcc00;
+    text-shadow: 2px 2px 8px rgba(255,0,102,0.5);
+    pointer-events:none;
+    -webkit-user-select:none;
+    animation:pop 900ms infinite ease-in-out alternate;
+  }
+  @keyframes pop{
+    from{ transform: translate(-50%,-50%) scale(1); }
+    to{ transform: translate(-50%,-50%) scale(1.08); }
+  }
 
-    /* FLOATING NUMBER POSITION FIXED LOWER */
-    .floating-number {
-        position: absolute;
-        top: 66%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 95px;
-        font-weight: bold;
-        color: #ffcc00;
-        text-shadow: 3px 3px 8px #ff0066;
-        animation: pop 1s infinite ease-in-out alternate;
-        pointer-events: none;
-    }
+  /* controls */
+  .controls{
+    margin-top:14px;
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .controls button{
+    background:var(--accent);
+    border:none;
+    color:white;
+    padding:10px 14px;
+    border-radius:10px;
+    font-size:1rem;
+    cursor:pointer;
+    box-shadow:0 4px 8px rgba(0,0,0,0.12);
+  }
+  .controls button.secondary{
+    background:#fff;
+    color:#333;
+    border:2px solid #eee;
+  }
 
-    @keyframes pop {
-        0% { transform: translate(-50%, -50%) scale(1); }
-        100% { transform: translate(-50%, -50%) scale(1.15); }
-    }
+  input[type="text"]{
+    margin-top:12px;
+    width:calc(100% - 24px);
+    padding:12px;
+    border-radius:10px;
+    border:2px solid #ddd;
+    font-size:1.05rem;
+    text-align:center;
+  }
 
-    input {
-        width: 90%;
-        padding: 12px;
-        font-size: 22px;
-        border: 2px solid #7a7a7a;
-        border-radius: 12px;
-        margin-top: 20px;
-    }
+  #result{
+    margin-top:12px;
+    min-height:28px;
+    font-weight:700;
+    font-size:1.05rem;
+  }
 
-    button {
-        margin-top: 15px;
-        padding: 12px 32px;
-        background: #ff7b5a;
-        border: none;
-        color: #fff;
-        font-size: 24px;
-        border-radius: 12px;
-        cursor: pointer;
-    }
+  /* progress bar */
+  .progress{
+    height:12px;
+    background:#f1f1f1;
+    border-radius:999px;
+    overflow:hidden;
+    margin-top:14px;
+  }
+  .progress > .bar{
+    height:100%;
+    width:0%;
+    background: linear-gradient(90deg,#ffd86f,#ff7b5a);
+    transition:width 700ms cubic-bezier(.2,.9,.2,1);
+  }
 
-    #result {
-        font-size: 26px;
-        font-weight: bold;
-        margin-top: 10px;
-    }
+  /* celebration area for stars */
+  .celebration{
+    margin-top:12px;
+    min-height:36px;
+    pointer-events:none;
+  }
 
-    #celebration {
-        font-size: 22px;
-        margin-top: 15px;
-        display: none;
-        color: #ff1493;
-        animation: sparkle 1.5s infinite;
-    }
+  /* small helper row */
+  .row{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    align-items:center;
+    margin-top:8px;
+  }
 
-    @keyframes sparkle {
-        0%,100% { opacity:1; }
-        50% { opacity:0.4; }
-    }
+  /* responsive tweaks */
+  @media (max-width:420px){
+    .floating-number{ font-size:18vw; top:68%; }
+    .controls button{ padding:10px 10px; font-size:0.95rem;}
+    h1{ font-size:1.3rem; }
+  }
 
-    /* EXTRA MOBILE OPTIMIZATION */
-    @media (max-width: 480px) {
-        h1 { font-size: 32px; }
-        .floating-number { font-size: 75px; top: 68%; }
-        input { font-size: 20px; }
-        button { font-size: 22px; }
-    }
+  /* confetti canvas sits on top */
+  #confetti-canvas{
+    position:fixed;
+    left:0; top:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    z-index:9999;
+  }
+
+  /* small star style */
+  .star{
+    display:inline-block;
+    font-size:20px;
+    opacity:0;
+    transform:translateY(8px) scale(0.8);
+    animation:floatStar 1200ms ease-out forwards;
+  }
+  @keyframes floatStar{
+    0% { opacity:0; transform:translateY(12px) scale(.6); }
+    60% { opacity:1; transform:translateY(-6px) scale(1.05); }
+    100% { opacity:0; transform:translateY(-30px) scale(.9); }
+  }
 </style>
 </head>
 <body>
+  <canvas id="confetti-canvas"></canvas>
 
-<h1>Spell the Number!</h1>
+  <div class="app" role="application" aria-label="Hanna spelling game">
+    <h1>Spell the Number!</h1>
 
-<div class="game-box">
-
-    <div class="hanna-container">
-        <img src="hanna.jpeg" class="hanna-image">
-        <div id="dynamic-number" class="floating-number"></div>
+    <div class="hanna-wrap" aria-hidden="false">
+      <!-- Put your image filename here (hanna.jpeg/hanna.png) -->
+      <img src="hanna.jpeg" alt="Hanna Yasmin" class="hanna-image" id="hannaImage">
+      <div id="dynamic-number" class="floating-number" aria-hidden="true"></div>
     </div>
 
-    <input id="answer" placeholder="Type the spelling...">
-    <button onclick="checkAnswer()">Check</button>
+    <input id="answer" type="text" placeholder="Type the spelling..." autocomplete="off" />
 
-    <p id="result"></p>
-    <div id="celebration"></div>
-</div>
+    <div class="controls" style="margin-top:10px;">
+      <button id="prevBtn" class="secondary" title="Previous (Left arrow)">⟵ Prev</button>
+      <button id="checkBtn" title="Check (Enter)">✔ Check</button>
+      <button id="nextBtn" class="secondary" title="Next (Right arrow)">Next ⟶</button>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <button id="pronounceBtn" class="secondary">🔊 Pronounce</button>
+      <button id="musicToggle" class="secondary">🎵 Music: Off</button>
+      <button id="muteToggle" class="secondary">🔈 Sound: On</button>
+    </div>
+
+    <div id="result" aria-live="polite"></div>
+
+    <div class="progress" aria-hidden="true" style="margin-top:10px;">
+      <div class="bar" id="scoreBar"></div>
+    </div>
+
+    <div class="celebration" id="celebration"></div>
+  </div>
 
 <script>
-let numbers = [
-    { num: 1, word: "one" },
-    { num: 2, word: "two" },
-    { num: 3, word: "three" },
-    { num: 4, word: "four" },
-    { num: 5, word: "five" },
-    { num: 6, word: "six" },
-    { num: 7, word: "seven" },
-    { num: 8, word: "eight" },
-    { num: 9, word: "nine" },
-    { num: 10, word: "ten" }
+/* ---------- Data ---------- */
+const numbers = [
+  { num:1, word:"one" },
+  { num:2, word:"two" },
+  { num:3, word:"three" },
+  { num:4, word:"four" },
+  { num:5, word:"five" },
+  { num:6, word:"six" },
+  { num:7, word:"seven" },
+  { num:8, word:"eight" },
+  { num:9, word:"nine" },
+  { num:10, word:"ten" }
 ];
-
 let currentIndex = 0;
+let score = 0;
 
-function loadNumber() {
-    document.getElementById("dynamic-number").textContent = numbers[currentIndex].num;
+/* ---------- DOM ---------- */
+const dynamicNumber = document.getElementById('dynamic-number');
+const answerInput = document.getElementById('answer');
+const resultEl = document.getElementById('result');
+const scoreBar = document.getElementById('scoreBar');
+const celebration = document.getElementById('celebration');
+const confettiCanvas = document.getElementById('confetti-canvas');
+
+/* ---------- WebAudio for sounds ---------- */
+let audioCtx = null;
+let bgOsc = null;
+let bgGain = null;
+let soundEnabled = true;
+let musicEnabled = false;
+
+function ensureAudio(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
 }
 
-loadNumber();
+/* happy chime using oscillators */
+function playCorrectSound(){
+  if(!soundEnabled) return;
+  ensureAudio();
+  const now = audioCtx.currentTime;
+  const g = audioCtx.createGain(); g.connect(audioCtx.destination);
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(0.08, now + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
 
-function checkAnswer() {
-    let input = document.getElementById("answer").value.trim().toLowerCase();
-    let result = document.getElementById("result");
+  // small arpeggio
+  const freqs = [660, 880, 990];
+  freqs.forEach((f, i)=>{
+    const o = audioCtx.createOscillator();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(f, now + i*0.08);
+    o.connect(g);
+    o.start(now + i*0.08);
+    o.stop(now + 0.5 + i*0.08);
+  });
+}
 
-    if (input === numbers[currentIndex].word) {
-        result.style.color = "green";
-        result.textContent = "✔ Correct! 😊";
+/* sad buzzer */
+function playWrongSound(){
+  if(!soundEnabled) return;
+  ensureAudio();
+  const now = audioCtx.currentTime;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'sawtooth';
+  o.frequency.setValueAtTime(220, now);
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(0.08, now + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(now);
+  o.frequency.exponentialRampToValueAtTime(110, now + 0.5);
+  o.stop(now + 0.7);
+}
 
-        currentIndex++;
-        document.getElementById("answer").value = "";
+/* gentle background melody (simple oscillator loop) */
+function startBackgroundMusic(){
+  if(musicEnabled || !soundEnabled) return;
+  ensureAudio();
+  bgOsc = audioCtx.createOscillator();
+  bgGain = audioCtx.createGain();
+  bgOsc.type = 'sine';
+  bgOsc.frequency.value = 220; // base
+  bgGain.gain.value = 0.0001;
+  bgOsc.connect(bgGain);
+  bgGain.connect(audioCtx.destination);
+  bgOsc.start();
+  // ramp volume
+  bgGain.gain.linearRampToValueAtTime(0.02, audioCtx.currentTime + 0.8);
+  musicEnabled = true;
+}
+function stopBackgroundMusic(){
+  if(!musicEnabled || !bgOsc) return;
+  bgGain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
+  setTimeout(() => {
+    try{ bgOsc.stop(); }catch(e){}
+    bgOsc = null; bgGain = null; musicEnabled = false;
+  }, 700);
+}
 
-        if (currentIndex < numbers.length) {
-            loadNumber();
-        } else {
-            result.textContent = "🎉 Finished! Great Job!";
-            let celeb = document.getElementById('celebration');
-            celeb.innerHTML = "🌟 Hanna Yasmin got 10 stars! 🌟<br>😀✨ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ✨😀";
-            celeb.style.display = "block";
-        }
+/* ---------- Speech (pronunciation) ---------- */
+function pronounceCurrent(){
+  const numObj = numbers[currentIndex];
+  if('speechSynthesis' in window){
+    const s = new SpeechSynthesisUtterance(numObj.num.toString());
+    s.lang = 'en-US';
+    s.rate = 0.9;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(s);
+  } else {
+    // fallback beep
+    playCorrectSound();
+  }
+}
 
+/* ---------- UI helpers ---------- */
+function updateNumberDisplay(){
+  dynamicNumber.textContent = numbers[currentIndex].num;
+}
+function updateProgress(){
+  const pct = Math.round((score / numbers.length) * 100);
+  scoreBar.style.width = pct + '%';
+}
+
+/* ---------- Check answer ---------- */
+function showResult(text, ok){
+  if(ok){
+    resultEl.style.color = 'green';
+  } else {
+    resultEl.style.color = 'red';
+  }
+  resultEl.textContent = text;
+}
+
+function handleCorrect(){
+  playCorrectSound();
+  // confetti + stars
+  launchConfetti();
+  spawnStars(10);
+  // increment score (but only once per number)
+  score = Math.min(numbers.length, score + 1);
+  updateProgress();
+  // celebrate text
+  celebration.innerHTML = `🌟 Hanna Yasmin got ${score} ${score===1?'star':'stars'}!`;
+  // small delay then auto move to next
+  setTimeout(() => {
+    if(currentIndex < numbers.length - 1){
+      currentIndex++;
+      loadNumberAndReset();
     } else {
-        result.style.color = "red";
-        result.textContent = "✖ Wrong! 😢";
+      // finished
+      showResult('🎉 Finished! Great Job!', true);
+      celebration.innerHTML += ' 🎉';
     }
+  }, 900);
 }
-</script>
 
+function handleWrong(){
+  playWrongSound();
+  spawnStars(0); // no stars, maybe small animation
+}
+
+/* ---------- Load & reset ---------- */
+function loadNumberAndReset(){
+  updateNumberDisplay();
+  answerInput.value = '';
+  resultEl.textContent = '';
+}
+
+/* ---------- Game logic: checkAnswer ---------- */
+function checkAnswer(){
+  const input = answerInput.value.trim().toLowerCase();
+  const correct = numbers[currentIndex].word;
+  if(!input){
+    showResult('Please type the spelling', false);
+    return;
+  }
+  if(input === correct){
+    showResult('✔ Correct! 😊', true);
+    handleCorrect();
+  } else {
+    showResult('✖ Wrong! 😢', false);
+    handleWrong();
+  }
+}
+
+/* ---------- Prev / Next ---------- */
+function goNext(){
+  if(currentIndex < numbers.length - 1){
+    currentIndex++;
+    loadNumberAndReset();
+  }
+}
+function goPrev(){
+  if(currentIndex > 0){
+    currentIndex--;
+    loadNumberAndReset();
+  }
+}
+
+/* ---------- Keyboard support ---------- */
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter'){ checkAnswer(); }
+  if(e.key === 'ArrowRight'){ goNext(); }
+  if(e.key === 'ArrowLeft'){ goPrev(); }
+});
+
+/* ---------- Buttons ---------- */
+document.getElementById('checkBtn').addEventListener('click', checkAnswer);
+document.getElementById('nextBtn').addEventListener('click', goNext);
+document.getElementById('prevBtn').addEventListener('click', goPrev);
+document.getElementById('pronounceBtn').addEventListener('click', pronounceCurrent);
+
+document.getElementById('musicToggle').addEventListener('click', function(){
+  ensureAudio();
+  if(!musicEnabled){
+    startBackgroundMusic();
+    this.textContent = '🎵 Music: On';
+  } else {
+    stopBackgroundMusic();
+    this.textContent = '🎵 Music: Off';
+  }
+});
+
+document.getElementById('muteToggle').addEventListener('click', function(){
+  // toggles sound effects (does not stop background music if already on)
+  soundEnabled = !soundEnabled;
+  this.textContent = soundEnabled ? '🔈 Sound: On' : '🔇 Sound: Off';
+  // if turning on music while previously musicEnabled false, leave it off until user toggles music button
+});
+
+/* ---------- Confetti implementation (simple) ---------- */
+const confetti = (function(){
+  const canvas = confettiCanvas;
+  const ctx = canvas.getContext('2d');
+  let W = canvas.width = innerWidth;
+  let H = canvas.height = innerHeight;
+  let particles = [];
+  let running = false;
+
+  window.addEventListener('resize', ()=>{ W = canvas.width = innerWidth; H = canvas.height = innerHeight; });
+
+  function rand(min,max){ return Math.random()*(max-min)+min; }
+
+  function createParticles(count=60){
+    for(let i=0;i<count;i++){
+      particles.push({
+        x: rand(W*0.2, W*0.8),
+        y: rand(-50, -10),
+        r: rand(6,12),
+        d: rand(10,40),
+        color: `hsl(${Math.floor(rand(0,360))}deg 80% 60%)`,
+        tilt: rand(-0.2,0.2),
+        vx: rand(-0.5,0.5),
+        vy: rand(2,6),
+        life: rand(60,140)
+      });
+    }
+  }
+
+  function render(){
+    ctx.clearRect(0,0,W,H);
+    for(let p of particles){
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      // draw rectangle as confetti piece with tilt
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.tilt);
+      ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
+      ctx.restore();
+    }
+  }
+
+  function update(){
+    for(let i=particles.length-1;i>=0;i--){
+      let p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.tilt += 0.03;
+      p.life--;
+      if(p.y > H + 20 || p.life <= 0){
+        particles.splice(i,1);
+      }
+    }
+  }
+
+  function loop(){
+    if(!running) return;
+    update();
+    render();
+    if(particles.length === 0){
+      running = false;
+      ctx.clearRect(0,0,W,H);
+      return;
+    }
+    requestAnimationFrame(loop);
+  }
+
+  return {
+    launch(count=80){
+      createParticles(count);
+      if(!running){
+        running = true;
+        loop();
+      }
+    }
+  };
+})();
+
+function launchConfetti(){
+  confetti.launch(90);
+}
+
+/* ---------- Floating stars spawn ---------- */
+function spawnStars(count=6){
+  celebration.innerHTML = '';
+  for(let i=0;i<count;i++){
+    const s = document.createElement('span');
+    s.className = 'star';
+    s.textContent = i%2===0 ? '⭐' : '✨';
+    s.style.animationDelay = (i*80)+'ms';
+    celebration.appendChild(s);
+  }
+}
+
+/* ---------- Init ---------- */
+function init(){
+  updateNumberDisplay();
+  updateProgress();
+  answerInput.focus();
+  // friendly hint for mobile to allow audio on user gesture
+  document.body.addEventListener('click', ()=> {
+    if(!audioCtx) {
+      ensureAudio();
+    }
+  }, { once:true });
+}
+init();
+
+</script>
 </body>
 </html>
