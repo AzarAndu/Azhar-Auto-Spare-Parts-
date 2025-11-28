@@ -171,7 +171,7 @@
     font-size:20px;
     opacity:0;
     transform:translateY(8px) scale(0.8);
-    animation:floatStar 1200ms ease-out forwards;
+    animation:floatStar 2200ms ease-out forwards;
   }
   @keyframes floatStar{
     0% { opacity:0; transform:translateY(12px) scale(.6); }
@@ -473,7 +473,7 @@ const confetti = (function(){
         tilt: rand(-0.2,0.2),
         vx: rand(-0.5,0.5),
         vy: rand(2,6),
-        life: rand(60,140)
+        life: rand(200,350)
       });
     }
   }
@@ -529,7 +529,7 @@ const confetti = (function(){
 })();
 
 function launchConfetti(){
-  confetti.launch(90);
+  confetti.launch(150);
 }
 
 /* ---------- Floating stars spawn ---------- */
