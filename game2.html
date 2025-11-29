@@ -9,7 +9,7 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      background: #fbe9e7;
       display: flex;
       justify-content: center;
       padding: 20px;
@@ -17,49 +17,64 @@
 
     .game-container {
       width: 100%;
-      max-width: 450px;
+      max-width: 500px;
       background: white;
       padding: 20px;
-      border-radius: 18px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 22px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .hanna-box {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .hanna-box img {
+      width: 85%;
+      max-width: 280px;
+      border-radius: 20px;
     }
 
     h2 {
       text-align: center;
       margin-bottom: 10px;
       color: #333;
+      font-size: 30px;
     }
 
     .problem-box {
-      font-size: 38px;
+      font-size: 42px;
       text-align: center;
-      padding: 20px;
+      padding: 18px;
       border-radius: 12px;
-      background: #fafafa;
+      background: #fff3e0;
       margin-bottom: 15px;
-      border: 2px solid #ddd;
+      border: 2px solid #ffcc80;
+      font-weight: bold;
     }
 
     input {
       width: 100%;
-      padding: 14px;
-      font-size: 22px;
+      padding: 18px;
+      font-size: 24px;
       border: 2px solid #ccc;
-      border-radius: 10px;
+      border-radius: 12px;
       box-sizing: border-box;
       margin-bottom: 12px;
+      text-align: center;
     }
 
     button {
       width: 100%;
-      padding: 16px;
-      font-size: 20px;
+      padding: 18px;
+      font-size: 22px;
       border: none;
       color: white;
-      background: #0077ff;
+      background: #ff7043;
       border-radius: 12px;
       cursor: pointer;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     button:active {
@@ -68,9 +83,9 @@
 
     .status {
       text-align: center;
-      font-size: 22px;
+      font-size: 26px;
       margin-top: 10px;
-      height: 30px;
+      height: 40px;
       font-weight: bold;
     }
 
@@ -91,17 +106,10 @@
 
     @keyframes shake {
       0% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      50% { transform: translateX(5px); }
-      75% { transform: translateX(-5px);}
+      25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      75% { transform: translateX(-6px);}
       100% { transform: translateX(0); }
-    }
-
-    .score-timer {
-      display: flex;
-      justify-content: space-between;
-      font-size: 18px;
-      margin-bottom: 10px;
     }
 
     .progress {
@@ -116,20 +124,24 @@
     .progress-bar {
       height: 100%;
       width: 0%;
-      background: #0077ff;
+      background: #ff7043;
       transition: width 0.3s;
+    }
+
+    .next-game {
+      background: #29b6f6;
     }
   </style>
 </head>
 <body>
 
 <div class="game-container">
-  <h2>Math Game</h2>
 
-  <div class="score-timer">
-    <span id="score">Score: 0</span>
-    <span id="timer">Time: 0s</span>
+  <div class="hanna-box">
+    <img src="hanna.jpeg" alt="Hanna">
   </div>
+
+  <h2>Addition Practice</h2>
 
   <div class="progress">
     <div class="progress-bar" id="progressBar"></div>
@@ -137,30 +149,31 @@
 
   <div class="problem-box" id="problem"></div>
 
-  <input type="number" id="answer" placeholder="Type your answer..." />
+  <input type="number" id="answer" placeholder="Type answer..." />
 
   <button onclick="checkAnswer()">Check</button>
   <button onclick="nextProblem()">Next</button>
 
+  <button class="next-game" onclick="window.location.href='game2.html'">
+    Next Game →
+  </button>
+
   <div id="status" class="status"></div>
 </div>
+
+<!-- SOUND EFFECTS -->
+<audio id="correctSound">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1a660e90bb.mp3?filename=correct-2-46134.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="wrongSound">
+  <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_3478d77822.mp3?filename=error-126627.mp3" type="audio/mpeg">
+</audio>
 
 <script>
   let num1, num2, correctAnswer;
   let score = 0;
-  let timer = 0;
-  let timerInterval;
-
-  function startTimer() {
-    clearInterval(timerInterval);
-    timer = 0;
-    document.getElementById("timer").textContent = "Time: 0s";
-
-    timerInterval = setInterval(() => {
-      timer++;
-      document.getElementById("timer").textContent = `Time: ${timer}s`;
-    }, 1000);
-  }
+  let progressWidth = 0; // slow growth
 
   function newProblem() {
     num1 = Math.floor(Math.random() * 10) + 1;
@@ -173,18 +186,18 @@
     document.getElementById("status").textContent = "";
 
     updateProgress();
-    startTimer();
   }
 
   function checkAnswer() {
     const userAnswer = parseInt(document.getElementById("answer").value);
 
     if (userAnswer === correctAnswer) {
+      document.getElementById("correctSound").play();
+      showStatus("Correct! 😊", "correct");
       score++;
-      document.getElementById("score").textContent = `Score: ${score}`;
-      showStatus("Correct ✓", "correct");
     } else {
-      showStatus("Wrong ✗", "wrong");
+      document.getElementById("wrongSound").play();
+      showStatus("Wrong! ☹️", "wrong");
     }
   }
 
@@ -199,9 +212,9 @@
   }
 
   function updateProgress() {
-    const bar = document.getElementById("progressBar");
-    const width = Math.min(score * 10, 100); // max 100%
-    bar.style.width = width + "%";
+    progressWidth += 3; // grows slowly every question
+    if (progressWidth > 100) progressWidth = 100;
+    document.getElementById("progressBar").style.width = progressWidth + "%";
   }
 
   // Start game
