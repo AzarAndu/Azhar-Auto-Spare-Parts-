@@ -1,224 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Math Game</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hanna Math Game</title>
 
-  <style>
+<style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fbe9e7;
-      display: flex;
-      justify-content: center;
-      padding: 20px;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: linear-gradient(to bottom right, #ffecd2, #fcb69f);
+        margin: 0;
+        padding: 0;
     }
 
-    .game-container {
-      width: 100%;
-      max-width: 500px;
-      background: white;
-      padding: 20px;
-      border-radius: 22px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    .container {
+        max-width: 480px;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
     }
 
-    .hanna-box {
-      width: 100%;
-      text-align: center;
-      margin-bottom: 15px;
+    .hanna {
+        width: 160px;
+        margin-bottom: 10px;
     }
 
-    .hanna-box img {
-      width: 85%;
-      max-width: 280px;
-      border-radius: 20px;
+    .question {
+        font-size: 32px;
+        margin: 15px 0;
+        font-weight: bold;
+        color: #333;
     }
 
-    h2 {
-      text-align: center;
-      margin-bottom: 10px;
-      color: #333;
-      font-size: 30px;
+    .input-box {
+        font-size: 28px;
+        padding: 10px;
+        width: 150px;
+        border-radius: 10px;
+        border: 2px solid #444;
+        text-align: center;
     }
 
-    .problem-box {
-      font-size: 42px;
-      text-align: center;
-      padding: 18px;
-      border-radius: 12px;
-      background: #fff3e0;
-      margin-bottom: 15px;
-      border: 2px solid #ffcc80;
-      font-weight: bold;
+    .result {
+        font-size: 28px;
+        margin-top: 10px;
+        min-height: 40px;
     }
 
-    input {
-      width: 100%;
-      padding: 18px;
-      font-size: 24px;
-      border: 2px solid #ccc;
-      border-radius: 12px;
-      box-sizing: border-box;
-      margin-bottom: 12px;
-      text-align: center;
+    .emoji {
+        font-size: 40px;
+        margin-top: 10px;
+        min-height: 50px;
     }
 
-    button {
-      width: 100%;
-      padding: 18px;
-      font-size: 22px;
-      border: none;
-      color: white;
-      background: #ff7043;
-      border-radius: 12px;
-      cursor: pointer;
-      margin-bottom: 12px;
+    .nextgame-btn {
+        margin-top: 20px;
+        padding: 15px 25px;
+        background: #008cff;
+        color: white;
+        border: none;
+        font-size: 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: bold;
     }
 
-    button:active {
-      opacity: 0.8;
+    @media (max-width: 500px) {
+        .container {
+            max-width: 90%;
+            padding: 15px;
+        }
+        .question { font-size: 28px; }
+        .input-box { font-size: 24px; width: 130px; }
     }
-
-    .status {
-      text-align: center;
-      font-size: 26px;
-      margin-top: 10px;
-      height: 40px;
-      font-weight: bold;
-    }
-
-    .correct {
-      color: #2fbf71;
-      animation: pop 0.3s ease;
-    }
-
-    .wrong {
-      color: #e85d5d;
-      animation: shake 0.3s ease;
-    }
-
-    @keyframes pop {
-      0% { transform: scale(0.7); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-6px); }
-      50% { transform: translateX(6px); }
-      75% { transform: translateX(-6px);}
-      100% { transform: translateX(0); }
-    }
-
-    .progress {
-      height: 12px;
-      width: 100%;
-      background: #ddd;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 15px;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: #ff7043;
-      transition: width 0.3s;
-    }
-
-    .next-game {
-      background: #29b6f6;
-    }
-  </style>
+</style>
 </head>
 <body>
 
-<div class="game-container">
+<div class="container">
 
-  <div class="hanna-box">
-    <img src="hanna.jpeg" alt="Hanna">
-  </div>
+    <img src="hanna.png" class="hanna" />
 
-  <h2>Addition Practice</h2>
+    <div id="question" class="question">Loading...</div>
 
-  <div class="progress">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
+    <input type="number" id="answerInput" class="input-box" placeholder="Answer" />
 
-  <div class="problem-box" id="problem"></div>
+    <div id="result" class="result"></div>
+    <div id="emoji" class="emoji"></div>
 
-  <input type="number" id="answer" placeholder="Type answer..." />
+    <button class="nextgame-btn" onclick="goNextGame()">Next Game</button>
 
-  <button onclick="checkAnswer()">Check</button>
-  <button onclick="nextProblem()">Next</button>
-
-  <button class="next-game" onclick="window.location.href='game2.html'">
-    Next Game →
-  </button>
-
-  <div id="status" class="status"></div>
 </div>
 
-<!-- SOUND EFFECTS -->
+<!-- Sounds -->
 <audio id="correctSound">
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1a660e90bb.mp3?filename=correct-2-46134.mp3" type="audio/mpeg">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3">
 </audio>
-
 <audio id="wrongSound">
-  <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_3478d77822.mp3?filename=error-126627.mp3" type="audio/mpeg">
+    <source src="https://assets.mixkit.co/active_storage/sfx/2037/2037-preview.mp3">
 </audio>
 
 <script>
-  let num1, num2, correctAnswer;
-  let score = 0;
-  let progressWidth = 0; // slow growth
+let num1, num2, correctAnswer;
 
-  function newProblem() {
+function newQuestion() {
     num1 = Math.floor(Math.random() * 10) + 1;
     num2 = Math.floor(Math.random() * 10) + 1;
 
     correctAnswer = num1 + num2;
 
-    document.getElementById("problem").textContent = `${num1} + ${num2}`;
-    document.getElementById("answer").value = "";
-    document.getElementById("status").textContent = "";
+    document.getElementById("question").textContent = `${num1} + ${num2} = ?`;
 
-    updateProgress();
-  }
+    document.getElementById("result").textContent = "";
+    document.getElementById("emoji").textContent = "";
+    document.getElementById("answerInput").value = "";
+}
 
-  function checkAnswer() {
-    const userAnswer = parseInt(document.getElementById("answer").value);
+document.getElementById("answerInput").addEventListener("input", function () {
+    let userAns = Number(this.value);
 
-    if (userAnswer === correctAnswer) {
-      document.getElementById("correctSound").play();
-      showStatus("Correct! 😊", "correct");
-      score++;
-    } else {
-      document.getElementById("wrongSound").play();
-      showStatus("Wrong! ☹️", "wrong");
+    if (userAns === correctAnswer) {
+        document.getElementById("result").style.color = "green";
+        document.getElementById("result").textContent = "Correct ✔";
+        document.getElementById("emoji").textContent = "😊🎉⭐";
+        document.getElementById("correctSound").play();
+
+        setTimeout(newQuestion, 900); // auto load next question
     }
-  }
+    else if (this.value !== "") {
+        document.getElementById("result").style.color = "red";
+        document.getElementById("result").textContent = "Wrong ✘";
+        document.getElementById("emoji").textContent = "😢";
+        document.getElementById("wrongSound").play();
+    }
+});
 
-  function showStatus(message, type) {
-    const status = document.getElementById("status");
-    status.textContent = message;
-    status.className = `status ${type}`;
-  }
+function goNextGame() {
+    window.location.href = "game2.html";
+}
 
-  function nextProblem() {
-    newProblem();
-  }
-
-  function updateProgress() {
-    progressWidth += 3; // grows slowly every question
-    if (progressWidth > 100) progressWidth = 100;
-    document.getElementById("progressBar").style.width = progressWidth + "%";
-  }
-
-  // Start game
-  newProblem();
+newQuestion();
 </script>
 
 </body>
