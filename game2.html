@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Math Game</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .game-container {
+      width: 100%;
+      max-width: 450px;
+      background: white;
+      padding: 20px;
+      border-radius: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .problem-box {
+      font-size: 38px;
+      text-align: center;
+      padding: 20px;
+      border-radius: 12px;
+      background: #fafafa;
+      margin-bottom: 15px;
+      border: 2px solid #ddd;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      font-size: 22px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      font-size: 20px;
+      border: none;
+      color: white;
+      background: #0077ff;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    button:active {
+      opacity: 0.8;
+    }
+
+    .status {
+      text-align: center;
+      font-size: 22px;
+      margin-top: 10px;
+      height: 30px;
+      font-weight: bold;
+    }
+
+    .correct {
+      color: #2fbf71;
+      animation: pop 0.3s ease;
+    }
+
+    .wrong {
+      color: #e85d5d;
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.7); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px);}
+      100% { transform: translateX(0); }
+    }
+
+    .score-timer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .progress {
+      height: 12px;
+      width: 100%;
+      background: #ddd;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #0077ff;
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+
+<div class="game-container">
+  <h2>Math Game</h2>
+
+  <div class="score-timer">
+    <span id="score">Score: 0</span>
+    <span id="timer">Time: 0s</span>
+  </div>
+
+  <div class="progress">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="problem-box" id="problem"></div>
+
+  <input type="number" id="answer" placeholder="Type your answer..." />
+
+  <button onclick="checkAnswer()">Check</button>
+  <button onclick="nextProblem()">Next</button>
+
+  <div id="status" class="status"></div>
+</div>
+
+<script>
+  let num1, num2, correctAnswer;
+  let score = 0;
+  let timer = 0;
+  let timerInterval;
+
+  function startTimer() {
+    clearInterval(timerInterval);
+    timer = 0;
+    document.getElementById("timer").textContent = "Time: 0s";
+
+    timerInterval = setInterval(() => {
+      timer++;
+      document.getElementById("timer").textContent = `Time: ${timer}s`;
+    }, 1000);
+  }
+
+  function newProblem() {
+    num1 = Math.floor(Math.random() * 10) + 1;
+    num2 = Math.floor(Math.random() * 10) + 1;
+
+    correctAnswer = num1 + num2;
+
+    document.getElementById("problem").textContent = `${num1} + ${num2}`;
+    document.getElementById("answer").value = "";
+    document.getElementById("status").textContent = "";
+
+    updateProgress();
+    startTimer();
+  }
+
+  function checkAnswer() {
+    const userAnswer = parseInt(document.getElementById("answer").value);
+
+    if (userAnswer === correctAnswer) {
+      score++;
+      document.getElementById("score").textContent = `Score: ${score}`;
+      showStatus("Correct ✓", "correct");
+    } else {
+      showStatus("Wrong ✗", "wrong");
+    }
+  }
+
+  function showStatus(message, type) {
+    const status = document.getElementById("status");
+    status.textContent = message;
+    status.className = `status ${type}`;
+  }
+
+  function nextProblem() {
+    newProblem();
+  }
+
+  function updateProgress() {
+    const bar = document.getElementById("progressBar");
+    const width = Math.min(score * 10, 100); // max 100%
+    bar.style.width = width + "%";
+  }
+
+  // Start game
+  newProblem();
+</script>
+
+</body>
+</html>
